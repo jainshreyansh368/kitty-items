@@ -51,10 +51,41 @@ pub contract KittyItemsMarket {
     )
 
     // Named paths
-    //
     pub let CollectionStoragePath: StoragePath
     pub let CollectionPublicPath: PublicPath
 
+    pub let allIdsForPrices : [UInt64]
+    pub let allPrices : [UFix64]
+    pub let allIdsForTimeStamps : [UInt64]
+    pub let allTimeStamps : [UFix64]
+
+    pub fun sortByPrice (id : UInt64, price : UFix64) {
+        allIdsForPrices.append(id)
+        allPrices.append(price)
+        
+        if allPrices.length == 1 && allIdsForPrices.length == 1 {
+            return
+        }
+
+        var i = 0
+        while i < allPrices.length-1 {
+            if allPrices[i] <= price {
+                i = i + 1
+            }
+            else {
+                var j = allPrices.length
+                while j > i {
+                    allPrices[j] = allPrices[j-1]
+                    allIdsForPrices[j] = allIdsForPrices[j-1]
+                    j = j - 1
+                }
+                allPrices[j] = price
+                allIdsForPrices[j] = id
+            }
+        }
+    }
+
+    // pub let category1 : [] = []
     // SaleOfferPublicView
     // An interface providing a read-only view of a SaleOffer
     //
