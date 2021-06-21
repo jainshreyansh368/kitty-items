@@ -10,7 +10,7 @@ pub contract KittyItems: NonFungibleToken {
     pub event ContractInitialized()
     pub event Withdraw(id: UInt64, from: Address?)
     pub event Deposit(id: UInt64, to: Address?)
-    pub event Minted(id: UInt64, typeID: UInt64)
+    pub event Minted(id: UInt64, typeID: UInt64, metadata: Metadata)
 
     // Named Paths
     //
@@ -23,20 +23,68 @@ pub contract KittyItems: NonFungibleToken {
     //
     pub var totalSupply: UInt64
 
+    pub resource interface Public {
+        pub let id: UInt64
+        pub let metadata: Metadata
+
+        //these two are added because I think they will be in the standard.
+        pub let title: String
+        pub let description: String
+
+    }
+
+    pub struct Metadata {
+        pub let title : String
+        pub let artistAddress:Address
+        pub let description: String
+        pub let typeID: UInt64
+        pub let edition: UInt64
+        pub let maxEdition: UInt64
+        pub let price: UFix64
+
+
+        init(title: String, 
+            artistAddress:Address, 
+            description: String, 
+            typeID: UInt64, 
+            edition: UInt64,
+            maxEdition: UInt64,
+            price: UFix64) {
+                self.title=title
+                self.artistAddress=artistAddress
+                self.description=description
+                self.typeID=typeID
+                self.edition=edition
+                self.maxEdition=maxEdition
+                self.price=price
+        }
+
+    }
+
+
     // NFT
     // A Kitty Item as an NFT
     //
-    pub resource NFT: NonFungibleToken.INFT {
+    pub resource NFT: NonFungibleToken.INFT, Public {
         // The token's ID
         pub let id: UInt64
         // The token's type, e.g. 3 == Hat
         pub let typeID: UInt64
+        pub let metadata:Metadata
+        pub let title: String
+        pub let description: String
 
         // initializer
         //
-        init(initID: UInt64, initTypeID: UInt64) {
+        init(
+            initID: UInt64,
+            initTypeID: UInt64,
+            metadata: Metadata) {
             self.id = initID
             self.typeID = initTypeID
+            self.metadata = metadata
+            self.title = metadata.title
+            self.description = metadata.description
         }
     }
 
@@ -151,14 +199,26 @@ pub contract KittyItems: NonFungibleToken {
 		// mintNFT
         // Mints a new NFT with a new ID
 		// and deposit it in the recipients collection using their collection reference
-        //
-		pub fun mintNFT(recipient: &{NonFungibleToken.CollectionPublic}, typeID: UInt64) {
-            emit Minted(id: KittyItems.totalSupply, typeID: typeID)
+		pub fun mintNFT(recipient: &{NonFungibleToken.CollectionPublic},title: String, artistAddress: Address, description: String, typeID: UInt64, edition: UInt64, maxEdition: UInt64, price: UFix64 ) : @KittyItems.NFT {
+            var newNFT <- create NFT(
+                initID: KittyItems.totalSupply,
+                initTypeID: typeID,
+                metadata: Metadata(
+                    title: title,
+                    artistAddress: artistAddress,
+                    description: description,
+                    typeID: typeID,
+                    edition: edition,
+                    maxEdition: maxEdition,
+                    price: price),
+            )  
+            emit Minted(id: KittyItems.totalSupply, typeID: typeID, metadata:newNFT.metadata)
 
 			// deposit it in the recipient's account using their reference
-			recipient.deposit(token: <-create KittyItems.NFT(initID: KittyItems.totalSupply, initTypeID: typeID))
+			recipient.deposit(token: <-create KittyItems.NFT(initID: KittyItems.totalSupply, initTypeID: typeID, metadata: newNFT.metadata))
 
             KittyItems.totalSupply = KittyItems.totalSupply + (1 as UInt64)
+            return <- newNFT
 		}
 	}
         
@@ -184,7 +244,7 @@ pub contract KittyItems: NonFungibleToken {
         // Set our named paths
         self.CollectionStoragePath = /storage/kittyItemsCollection
         self.CollectionPublicPath = /public/kittyItemsCollection
-        self.MinterStoragePath = /storage/kittyItemsMinter
+        self.MinterStoragePath = /storage/kittyItemsMint
 
         // Initialize the total supply
         self.totalSupply = 0
