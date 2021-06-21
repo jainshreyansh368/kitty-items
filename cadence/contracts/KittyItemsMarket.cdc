@@ -1,7 +1,8 @@
-import Kibble from 0x4fc019cea9fc4817
+import FlowToken from 0x7e60df042a9c0868
 import KittyItems from 0x4fc019cea9fc4817
-import FungibleToken from 0x4fc019cea9fc4817
+import FungibleToken from 0x9a0766d93b6608b7
 import NonFungibleToken from 0x4fc019cea9fc4817
+import DarkCountry from 0xe79a38d340d3ad34
 
 /*
     This is a simple KittyItems initial sale contract for the DApp to use
@@ -65,7 +66,7 @@ pub contract KittyItemsMarket {
     }
 
     // SaleOffer
-    // A KittyItems NFT being offered to sale for a set fee paid in Kibble.
+    // A KittyItems NFT being offered to sale for a set fee paid in FlowToken.
     //
     pub resource SaleOffer: SaleOfferPublicView {
         // Whether the sale has completed with someone purchasing the item.
@@ -83,16 +84,16 @@ pub contract KittyItemsMarket {
         // The collection containing that ID.
         access(self) let sellerItemProvider: Capability<&KittyItems.Collection{NonFungibleToken.Provider}>
 
-        // The Kibble vault that will receive that payment if teh sale completes successfully.
-        access(self) let sellerPaymentReceiver: Capability<&Kibble.Vault{FungibleToken.Receiver}>
+        // The FlowToken vault that will receive that payment if teh sale completes successfully.
+        access(self) let sellerPaymentReceiver: Capability<&FlowToken.Vault{FungibleToken.Receiver}>
 
         // Called by a purchaser to accept the sale offer.
-        // If they send the correct payment in Kibble, and if the item is still available,
+        // If they send the correct payment in FlowToken, and if the item is still available,
         // the KittyItems NFT will be placed in their KittyItems.Collection .
         //
         pub fun accept(
             buyerCollection: &KittyItems.Collection{NonFungibleToken.Receiver},
-            buyerPayment: @FungibleToken.Vault
+            buyerPayment: @FungibleToken.Vault,
         ) {
             pre {
                 buyerPayment.balance == self.price: "payment does not equal offer price"
@@ -118,13 +119,13 @@ pub contract KittyItemsMarket {
 
         // initializer
         // Take the information required to create a sale offer, notably the capability
-        // to transfer the KittyItems NFT and the capability to receive Kibble in payment.
+        // to transfer the KittyItems NFT and the capability to receive FlowToken in payment.
         //
         init(
             sellerItemProvider: Capability<&KittyItems.Collection{NonFungibleToken.Provider, KittyItems.KittyItemsCollectionPublic}>,
             itemID: UInt64,
             typeID: UInt64,
-            sellerPaymentReceiver: Capability<&Kibble.Vault{FungibleToken.Receiver}>,
+            sellerPaymentReceiver: Capability<&FlowToken.Vault{FungibleToken.Receiver}>,
             price: UFix64
         ) {
             pre {
@@ -158,7 +159,7 @@ pub contract KittyItemsMarket {
         sellerItemProvider: Capability<&KittyItems.Collection{NonFungibleToken.Provider, KittyItems.KittyItemsCollectionPublic}>,
         itemID: UInt64,
         typeID: UInt64,
-        sellerPaymentReceiver: Capability<&Kibble.Vault{FungibleToken.Receiver}>,
+        sellerPaymentReceiver: Capability<&FlowToken.Vault{FungibleToken.Receiver}>,
         price: UFix64
     ): @SaleOffer {
         return <-create SaleOffer(
@@ -239,8 +240,8 @@ pub contract KittyItemsMarket {
         }
  
         // purchase
-        // If the caller passes a valid itemID and the item is still for sale, and passes a Kibble vault
-        // typed as a FungibleToken.Vault (Kibble.deposit() handles the type safety of this)
+        // If the caller passes a valid itemID and the item is still for sale, and passes a Flow vault
+        // typed as a FungibleToken.Vault (Flow.deposit() handles the type safety of this)
         // containing the correct payment amount, this will transfer the KittyItem to the caller's
         // KittyItems collection.
         // It will then remove and destroy the offer.
