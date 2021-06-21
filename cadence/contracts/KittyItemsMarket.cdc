@@ -2,7 +2,6 @@ import FlowToken from 0x7e60df042a9c0868
 import KittyItems from 0x4fc019cea9fc4817
 import FungibleToken from 0x9a0766d93b6608b7
 import NonFungibleToken from 0x4fc019cea9fc4817
-import DarkCountry from 0xe79a38d340d3ad34
 
 /*
     This is a simple KittyItems initial sale contract for the DApp to use
