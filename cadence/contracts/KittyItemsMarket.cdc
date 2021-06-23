@@ -59,33 +59,48 @@ pub contract KittyItemsMarket {
     pub let allIdsForTimeStamps : [UInt64]
     pub let allTimeStamps : [UFix64]
 
-    pub fun sortByPrice (id : UInt64, price : UFix64) {
-        allIdsForPrices.append(id)
-        allPrices.append(price)
+    pub fun sortByPrice (id : UInt64, price : UFix64) {        
         
-        if allPrices.length == 1 && allIdsForPrices.length == 1 {
-            return
+        // If array was empty earlier
+        if (self.allPrices.length == 0 && self.allIdsForPrices.length == 0) || 
+        (self.allPrices[self.allPrices.length - 1] <= price) {
+            self.allIdsForPrices.append(id)
+            self.allPrices.append(price)
         }
 
-        var i = 0
-        while i < allPrices.length-1 {
-            if allPrices[i] <= price {
-                i = i + 1
-            }
-            else {
-                var j = allPrices.length
-                while j > i {
-                    allPrices[j] = allPrices[j-1]
-                    allIdsForPrices[j] = allIdsForPrices[j-1]
-                    j = j - 1
+        // If price is less than or equal to the first NFT's price
+        else if(self.allPrices[0] >= price) {
+            self.allPrices.insert (0, price)
+            self.allIdsForPrices.insert (0, id)
+        }
+
+        else {
+
+            var start = 0
+            var end = self.allPrices.length - 2
+
+            while start <= end {
+                var mid = start + (end - start)/2
+
+                if (self.allPrices[mid] <= price && price < self.allPrices[mid+1]) {
+                    self.allPrices.insert (mid + 1, price)
+                    self.allIdsForPrices.insert (mid + 1, id)
+                    return
                 }
-                allPrices[j] = price
-                allIdsForPrices[j] = id
+
+                else if(self.allPrices[mid] > price) {
+                    end = mid - 1
+                }
+
+                else {
+                    start = mid + 1
+                }
             }
         }
     }
 
-    // pub let category1 : [] = []
+    pub var typeDictionary : { UInt64 : [UInt64] }
+
     // SaleOfferPublicView
     // An interface providing a read-only view of a SaleOffer
     //
@@ -338,5 +353,11 @@ pub contract KittyItemsMarket {
         //FIXME: REMOVE SUFFIX BEFORE RELEASE
         self.CollectionStoragePath = /storage/kittyItemsMarketCollection002
         self.CollectionPublicPath = /public/kittyItemsMarketCollection002
+
+        self.allPrices = []
+        self.allIdsForPrices = []
+        self.allTimeStamps = []
+        self.allIdsForTimeStamps = []
+        self.typeDictionary = {}
     }
 }
