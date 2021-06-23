@@ -70,8 +70,8 @@ pub contract KittyItemsMarket {
 
         // If price is less than or equal to the first NFT's price
         else if(self.allPrices[0] >= price) {
-            self.allPrices.insert (0, price)
-            self.allIdsForPrices.insert (0, id)
+            self.allPrices.insert (at: 0, price)
+            self.allIdsForPrices.insert (at : 0, id)
         }
 
         else {
@@ -83,8 +83,8 @@ pub contract KittyItemsMarket {
                 var mid = start + (end - start)/2
 
                 if (self.allPrices[mid] <= price && price < self.allPrices[mid+1]) {
-                    self.allPrices.insert (mid + 1, price)
-                    self.allIdsForPrices.insert (mid + 1, id)
+                    self.allPrices.insert (at: mid + 1, price)
+                    self.allIdsForPrices.insert (at : mid + 1, id)
                     return
                 }
 
@@ -264,6 +264,27 @@ pub contract KittyItemsMarket {
             let itemID: UInt64 = offer.itemID
             let typeID: UInt64 = offer.typeID
             let price: UFix64 = offer.price
+            
+            KittyItemsMarket.sortByPrice(id : UInt64, price : UFix64)
+            KittyItemsMarket.allTimeStamps.append(getCurrentBlock().timestamp)
+            KittyItemsMarket.allIdsForTimeStamps.append(itemID)
+
+/*
+            // NO IDEA   (⊙_⊙;)       
+
+            if KittyItemsMarket.typeDictionary.containsKey(typeID)
+            {
+                //KittyItemsMarket.typeDictionary.insert(key : typeID , ??? )
+
+                KittyItemsMarket.typeDictionary[typeID].append(itemID)
+            }
+            else
+                KittyItemsMarket.typeDictionary = {TypeID : ?? }
+                
+               
+               (￣o￣) . z Z
+
+ */
 
             // add the new offer to the dictionary which removes the old one
             let oldOffer <- self.saleOffers[itemID] <- offer
