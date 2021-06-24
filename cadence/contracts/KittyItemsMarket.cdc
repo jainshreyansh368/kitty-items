@@ -269,8 +269,8 @@ pub contract KittyItemsMarket {
             KittyItemsMarket.allTimeStamps.append(getCurrentBlock().timestamp)
             KittyItemsMarket.allIdsForTimeStamps.append(itemID)
 
-/*
-            // NO IDEA   (⊙_⊙;)       
+
+            // DOUBT 
 
             if KittyItemsMarket.typeDictionary.containsKey(typeID)
             {
@@ -278,14 +278,12 @@ pub contract KittyItemsMarket {
 
                 KittyItemsMarket.typeDictionary[typeID].append(itemID)
             }
-            else
-                KittyItemsMarket.typeDictionary = {TypeID : ?? }
+            else {
+                KittyItemsMarket.typeDictionary = {typeID : [] }
+                KittyItemsMarket.typeDictionary[typeID].append(itemID)
+            }
+
                 
-               
-               (￣o￣) . z Z
-
- */
-
             // add the new offer to the dictionary which removes the old one
             let oldOffer <- self.saleOffers[itemID] <- offer
             destroy oldOffer
