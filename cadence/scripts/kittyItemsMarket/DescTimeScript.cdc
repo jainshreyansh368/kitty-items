@@ -1,5 +1,3 @@
-
-//Sort by time descending
 import KittyItemMarket from "./KittyItemMarket"
  
  //returns oldest 10 NFTs in sets
