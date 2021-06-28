@@ -1,20 +1,15 @@
 <p align="center">
     <a href="http://kitty-items-flow-testnet.herokuapp.com/">
-        <img width="400" src="kitty-items-banner.png" />
+        <img width="300" src="kitty-items-banner.png" />
     </a>
 </p>
 
-👋 Welcome! This demo app was created to help you learn how to build on Flow.
+🐱 Kitty Items is a **complete NFT marketplace** built with [Cadence](https://docs.onflow.org/cadence), Flow's resource-oriented smart contract programming language.
 
-- Kitty Items is a **complete NFT marketplace** built with [Cadence](https://docs.onflow.org/cadence), Flow's resource-oriented smart contract programming language.
-- Learn how to deploy contracts, mint NFTs, and integrate user wallets with the Flow Client Library (FCL).
+## 😺 What are Kitty Items?
 
-## 🎬 Live Demo
-
-Check out the [live demo of Kitty Items](http://kitty-items-flow-testnet.herokuapp.com/),
-deployed on the Flow Testnet.
-
-If you'd like to deploy your own version, see the [deploy to Heroku](#optional-heroku-deployment) instructions near the bottom to this setup guide.
+Items are hats for your cats, but under the hood they're [non-fungible tokens (NFTs)](https://github.com/onflow/flow-nft) stored on the Flow blockchain.
+Items can be purchased from the marketplace with fungible tokens.
 
 ## ✨ Getting Started
 
@@ -119,18 +114,6 @@ We love decentralization, but servers are still very useful, and this one's no e
 ### 3. Cadence Code | [kitty-items/cadence](https://github.com/onflow/kitty-items/tree/master/cadence)
 
 [Cadence](https://docs.onflow.org/cadence) smart contracts, scripts & transactions for your viewing pleasure. This folder contains all of the blockchain logic for the marketplace application. Here you will find examples of [fungible token](https://github.com/onflow/flow-ft) and [non-fungible token (NFT)](https://github.com/onflow/flow-nft) smart contract implementations, as well as the scripts and transactions that interact with them. It also contains examples of how to _test_ your Cadence code (tests written in Golang).
-
-## 😺 What are Kitty Items?
-
-Items are hats for your cats, but under the hood they're [non-fungible tokens (NFTs)](https://github.com/onflow/flow-nft) stored on the Flow blockchain.
-
-Items can be purchased from the marketplace with fungible tokens.
-In the future you'll be able to add them to [Ethereum CryptoKitties](https://www.cryptokitties.co/) with ownership validated by an oracle.
-
-## ❓ More Questions?
-
-- Chat with the team on the [Flow Discord server](https://discord.gg/xUdZxs82Rz)
-- Ask questions on the [Flow community forum](https://forum.onflow.org/t/kitty-items-marketplace-demo-dapp/759/5)
 
 ---
 

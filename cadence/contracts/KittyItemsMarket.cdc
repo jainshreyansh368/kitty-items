@@ -51,9 +51,55 @@ pub contract KittyItemsMarket {
     )
 
     // Named paths
-    //
     pub let CollectionStoragePath: StoragePath
     pub let CollectionPublicPath: PublicPath
+
+    pub let allIdsForPrices : [UInt64]
+    pub let allPrices : [UFix64]
+    pub let allIdsForTimeStamps : [UInt64]
+    pub let allTimeStamps : [UFix64]
+
+    pub fun sortByPrice (id : UInt64, price : UFix64) {        
+        
+        // If array was empty earlier
+        if (self.allPrices.length == 0 && self.allIdsForPrices.length == 0) || 
+        (self.allPrices[self.allPrices.length - 1] <= price) {
+            self.allIdsForPrices.append(id)
+            self.allPrices.append(price)
+        }
+
+        // If price is less than or equal to the first NFT's price
+        else if(self.allPrices[0] >= price) {
+            self.allPrices.insert (at: 0, price)
+            self.allIdsForPrices.insert (at : 0, id)
+        }
+
+        else {
+
+            var start = 0
+            var end = self.allPrices.length - 2
+
+            while start <= end {
+                var mid = start + (end - start)/2
+
+                if (self.allPrices[mid] <= price && price < self.allPrices[mid+1]) {
+                    self.allPrices.insert (at: mid + 1, price)
+                    self.allIdsForPrices.insert (at : mid + 1, id)
+                    return
+                }
+
+                else if(self.allPrices[mid] > price) {
+                    end = mid - 1
+                }
+
+                else {
+                    start = mid + 1
+                }
+            }
+        }
+    }
+
+    pub var typeDictionary : { UInt64 : [UInt64] }
 
     // SaleOfferPublicView
     // An interface providing a read-only view of a SaleOffer
@@ -218,7 +264,26 @@ pub contract KittyItemsMarket {
             let itemID: UInt64 = offer.itemID
             let typeID: UInt64 = offer.typeID
             let price: UFix64 = offer.price
+            
+            KittyItemsMarket.sortByPrice(id : UInt64, price : UFix64)
+            KittyItemsMarket.allTimeStamps.append(getCurrentBlock().timestamp)
+            KittyItemsMarket.allIdsForTimeStamps.append(itemID)
 
+
+            // DOUBT 
+
+            if KittyItemsMarket.typeDictionary.containsKey(typeID)
+            {
+                //KittyItemsMarket.typeDictionary.insert(key : typeID , ??? )
+
+                KittyItemsMarket.typeDictionary[typeID].append(itemID)
+            }
+            else {
+                KittyItemsMarket.typeDictionary = {typeID : [] }
+                KittyItemsMarket.typeDictionary[typeID].append(itemID)
+            }
+
+                
             // add the new offer to the dictionary which removes the old one
             let oldOffer <- self.saleOffers[itemID] <- offer
             destroy oldOffer
@@ -307,5 +372,11 @@ pub contract KittyItemsMarket {
         //FIXME: REMOVE SUFFIX BEFORE RELEASE
         self.CollectionStoragePath = /storage/kittyItemsMarketCollection002
         self.CollectionPublicPath = /public/kittyItemsMarketCollection002
+
+        self.allPrices = []
+        self.allIdsForPrices = []
+        self.allTimeStamps = []
+        self.allIdsForTimeStamps = []
+        self.typeDictionary = {}
     }
 }
