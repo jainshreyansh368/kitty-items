@@ -9,6 +9,6 @@ pub fun main(id : UInt64 , address : Address) : @KittyItems.metaData {
         .borrow<&{NonFungibleToken.CollectionPublic}>()
         ?? panic("Could not borrow capability from public collection")    
 
-    return collectionRef.ownedNFTs[id]
+    return collectionRef.ownedNFTs[id].metaData
 }
 
