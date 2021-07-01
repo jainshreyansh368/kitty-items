@@ -1,4 +1,4 @@
-import NonFungibleToken from 0x4fc019cea9fc4817
+import NonFungibleToken from "./NonFungibleToken"
 
 // KittyItems
 // NFT items for Kitties!
@@ -40,7 +40,7 @@ pub contract KittyItems: NonFungibleToken {
         pub let typeID: UInt64
         pub let edition: UInt64
         pub let maxEdition: UInt64
-        pub let price: UFix64
+        
 
 
         init(title: String, 
@@ -48,15 +48,14 @@ pub contract KittyItems: NonFungibleToken {
             description: String, 
             typeID: UInt64, 
             edition: UInt64,
-            maxEdition: UInt64,
-            price: UFix64) {
+            maxEdition: UInt64
+            ) {
                 self.title=title
                 self.artistAddress=artistAddress
                 self.description=description
                 self.typeID=typeID
                 self.edition=edition
                 self.maxEdition=maxEdition
-                self.price=price
         }
 
     }
@@ -73,18 +72,21 @@ pub contract KittyItems: NonFungibleToken {
         pub let metadata:Metadata
         pub let title: String
         pub let description: String
+        pub let price: UFix64
 
         // initializer
         //
         init(
             initID: UInt64,
             initTypeID: UInt64,
-            metadata: Metadata) {
+            metadata: Metadata,
+            initPrice : UInt64) {
             self.id = initID
             self.typeID = initTypeID
             self.metadata = metadata
             self.title = metadata.title
             self.description = metadata.description
+            self.price = initPrice
         }
     }
 
@@ -203,19 +205,19 @@ pub contract KittyItems: NonFungibleToken {
             var newNFT <- create NFT(
                 initID: KittyItems.totalSupply,
                 initTypeID: typeID,
+                initPrice : price,
                 metadata: Metadata(
                     title: title,
                     artistAddress: artistAddress,
                     description: description,
                     typeID: typeID,
                     edition: edition,
-                    maxEdition: maxEdition,
-                    price: price),
+                    maxEdition: maxEdition),
             )  
             emit Minted(id: KittyItems.totalSupply, typeID: typeID, metadata:newNFT.metadata)
 
 			// deposit it in the recipient's account using their reference
-			recipient.deposit(token: <-create KittyItems.NFT(initID: KittyItems.totalSupply, initTypeID: typeID, metadata: newNFT.metadata))
+			recipient.deposit(token: <-create KittyItems.NFT(initID: KittyItems.totalSupply, initTypeID: typeID, metadata: newNFT.metadata , initPrice : price))
 
             KittyItems.totalSupply = KittyItems.totalSupply + (1 as UInt64)
             return <- newNFT
