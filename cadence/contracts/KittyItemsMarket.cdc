@@ -100,21 +100,20 @@ pub contract KittyItemsMarket {
     }
 
     //Updates price in allPrices array after user updates NFT's price.
-    pub fun updatePriceArray(id : UInt64 ,price : UFix64){
-        var k = 0
+    pub fun updatePriceArray(id : UInt64 ,newPrice : UFix64){
         var i = 0
-        while(k==0)
+        while(1)
         {
-            if allIdsForPrices[i] == id{
-                allPrices.remove(i)
-                allIdsForPrices(i) 
-                k=1
+            if allIdsForPrices[i] == id {
+                var a = allPrices.remove(i)
+                var b = allIdsForPrices.remove(i) 
+                break
             }
-            else{
+            else {
                 i++
             }
         }
-        sortByPrice(id, price)
+        sortByPrice(id, newPrice)
     }
     
     pub var typeDictionary : { UInt64 : [UInt64] }
