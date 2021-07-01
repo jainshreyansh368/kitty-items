@@ -1,17 +1,17 @@
 import FungibleToken from 0x4fc019cea9fc4817
-import Kibble from 0x4fc019cea9fc4817
+import FlowToken from 0x4fc019cea9fc4817
 
 transaction(recipient: Address, amount: UFix64) {
-    let tokenAdmin: &Kibble.Administrator
+    let tokenAdmin: &FlowToken.Administrator
     let tokenReceiver: &{FungibleToken.Receiver}
 
     prepare(signer: AuthAccount) {
         self.tokenAdmin = signer
-        .borrow<&Kibble.Administrator>(from: Kibble.AdminStoragePath)
+        .borrow<&FlowToken.Administrator>(from: FlowToken.AdminStoragePath)
         ?? panic("Signer is not the token admin")
 
         self.tokenReceiver = getAccount(0x4fc019cea9fc4817)
-        .getCapability(Kibble.ReceiverPublicPath)!
+        .getCapability(FlowToken.ReceiverPublicPath)!
         .borrow<&{FungibleToken.Receiver}>()
         ?? panic("Unable to borrow receiver reference")
     }
